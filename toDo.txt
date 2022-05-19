@@ -17,3 +17,18 @@ As a user I want a way to delegate my vote to a delegate so they can vote on my 
 As a user I want to be able to see upcoming proposals so I know when to vote.
 
 As a user I want to be able to see past votes so I know what passed or did not.
+
+**NFT requirements**
+Hold data mapped to id with dob, hospital location, location, and voter elgibility
+
+function to return data as view 
+
+**Voting contract**
+
+    Copy and modify existing contract
+
+**client side**
+
+    Form for entering data that calls mint function from nft 
+    Call address from connection
+
