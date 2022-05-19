@@ -1,1 +1,19 @@
 A simple place to plan out what features need built out. 
+
+**USER STORIES**
+
+As a user I want my birth certificate to be an nft so I can never lose it.
+
+As a administrator I want to reserve access to change location and voting status to admins only so no unauthorized users change data.
+
+As a developer I would like the contract to be upgradeable so I can make future changes.
+
+As a state I want a way to use the birth certificate as a verification method for voting so the only eligible voter can vote
+
+As a delegate I want to be able to make proposal that can be voted so people know what its all about and can decide to or not to execute it 
+
+As a user I want a way to delegate my vote to a delegate so they can vote on my behalf
+
+As a user I want to be able to see upcoming proposals so I know when to vote.
+
+As a user I want to be able to see past votes so I know what passed or did not.
