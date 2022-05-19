@@ -1,1 +1,1 @@
-First commit test
+A simple place to plan out what features need built out. 
