@@ -1,15 +1,15 @@
 # Basic Sample Hardhat Project
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts.
+Install dependencies:
 
-Try running some of the following tasks:
+```
+npm install hardhat
+npm install @openzeppelin/contracts @nomiclabs/hardhat-etherscan dotenv
+```
 
-```shell
-npx hardhat accounts
-npx hardhat compile
-npx hardhat clean
-npx hardhat test
-npx hardhat node
-node scripts/sample-script.js
-npx hardhat help
+Install [BokkyPooBahsDateTimeLibrary](https://github.com/bokkypoobah/BokkyPooBahsDateTimeLibrary) :
+
+```
+cd library
+git clone https://github.com/bokkypoobah/BokkyPooBahsDateTimeLibrary.git
 ```
