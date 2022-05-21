@@ -18,8 +18,9 @@ import {
     voteabi,
 } from "./constants/constants";
 import { set } from "date-fns";
-
-
+import Mint from './components/Mint'
+import Proposal from "./components/Proposal";
+import Vote from './components/Vote'
 const defaultValues = {
     name: "",
     birthLocation: "",
@@ -372,7 +373,14 @@ const App = () => {
                             </TabList>
                         </Box>
                         <TabPanel value="1">
-                            <form
+                            <Mint 
+                              alreadyMinted={alreadyMinted} 
+                              formValues={formValues} 
+                              handleInputChange={handleInputChange} 
+                              handleSubmit={handleSubmit}
+                              CssTextField={CssTextField}
+                            />
+                            {/* <form
                                 // onSubmit={handleSubmit}
                                 style={{
                                     width: "100%",
@@ -457,226 +465,24 @@ const App = () => {
                                     </Stack>
                                     {alreadyMinted? <div style={{paddingTop:40}}>** You already have a Birth Certificate</div>: <></>}
                                 </Grid>
-                            </form>
+                            </form> */}
                         </TabPanel>
                         <TabPanel value="2">
-                            {nftBalance === 0 ? (
-                                <div>
-                                    You do not own any BirthCertificateNFT.{" "}
-                                    <br />
-                                    <b>
-                                        You cannot create or vote on proposals.
-                                    </b>
-                                </div>
-                            ) : (
-                                <form
-                                    // onSubmit={handleSubmit}
-                                    style={{
-                                        width: "100%",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                    }}
-                                >
-                                    <Grid
-                                        container
-                                        alignItems="center"
-                                        justify="center"
-                                        direction="column"
-                                    >
-                                        <Stack
-                                            component="form"
-                                            sx={{
-                                                width: "35ch",
-                                            }}
-                                            spacing={2}
-                                            noValidate
-                                            autoComplete="off"
-                                        >
-                                            <Grid item>
-                                                <CssTextField
-                                                    id="title-input"
-                                                    name="title"
-                                                    label="title"
-                                                    type="text"
-                                                    fullWidth
-                                                    value={
-                                                        proposalFormValues.title
-                                                    }
-                                                    onChange={
-                                                        handleCreateInputChange
-                                                    }
-                                                />
-                                            </Grid>
-                                            <Grid item>
-                                                <CssTextField
-                                                    id="desc-input"
-                                                    name="description"
-                                                    label="description"
-                                                    type="text"
-                                                    fullWidth
-                                                    value={
-                                                        proposalFormValues.description
-                                                    }
-                                                    onChange={
-                                                        handleCreateInputChange
-                                                    }
-                                                />
-                                            </Grid>
-                                            <Grid item>
-                                                <CssTextField
-                                                    id="location-input"
-                                                    name="location"
-                                                    label="location"
-                                                    type="text"
-                                                    fullWidth
-                                                    value={
-                                                        proposalFormValues.location
-                                                    }
-                                                    onChange={
-                                                        handleCreateInputChange
-                                                    }
-                                                />
-                                            </Grid>
-                                            <Grid item>
-                                                {/* <LocalizationProvider
-                                                    dateAdapter={AdapterDateFns}
-                                                >
-                                                    <DateTimePicker
-                                                        label="Voting Deadline"
-                                                        renderInput={(
-                                                            params
-                                                        ) => (
-                                                            <TextField
-                                                                {...params}
-                                                            />
-                                                        )}
-                                                        value={deadlineTime}
-                                                        onChange={(
-                                                            newValue
-                                                        ) => {
-                                                            setDeadlineTime(
-                                                                newValue
-                                                            );
-                                                        }}
-                                                    />
-                                                </LocalizationProvider> */}
-                                                <CssTextField
-                                                    id="date"
-                                                    label="Deadline"
-                                                    name="deadline"
-                                                    type="date"
-                                                    fullWidth
-                                                    value={
-                                                        proposalFormValues.deadline
-                                                    }
-                                                    onChange={(
-                                                        newValue
-                                                    ) => {
-                                                        setDeadlineTime(
-                                                            newValue
-                                                        );
-                                                    }}
-                                                    InputLabelProps={{
-                                                        shrink: true,
-                                                    }}
-                                                />
-                                            </Grid>
-                                            <Button
-                                                variant="contained"
-                                                color="primary"
-                                                type="submit"
-                                                onClick={createProposal}
-                                            >
-                                                {createProposalLoading
-                                                    ? "loading..."
-                                                    : "Submit"}
-                                            </Button>
-                                        </Stack>
-                                    </Grid>
-                                </form>
-                            )}
+                           <Proposal
+                             nftBalance={nftBalance}
+                            CssTextField={CssTextField} 
+                            proposalFormValues={proposalFormValues} 
+                            handleCreateInputChange={handleCreateInputChange} 
+                            setDeadlineTime={setDeadlineTime} 
+                            createProposal={createProposal} 
+                            createProposalLoading={createProposalLoading}
+                           />
                         </TabPanel>
                         <TabPanel value="3">
-                            {proposals.length === 0 ? (
-                                <div>No proposals have been created</div>
-                            ) : (
-                                <Box sx={{ flexGrow: 1 }}>
-                                    <Grid container spacing={2}>
-                                        {proposals.map((p, index) => (
-                                            <Grid item xs={12} md={6} lg={4}>
-                                                <div
-                                                    key={index}
-                                                    className="proposalCard"
-                                                >
-                                                    <h3 style={{ margin: "0" }}>
-                                                        Proposal for: {p.title}
-                                                    </h3>
-                                                    <p style={{ margin: "0" }}>
-                                                        {p.description}
-                                                    </p>
-                                                    <p style={{ margin: "0" }}>
-                                                        Location: {p.location}
-                                                    </p>
-                                                    <p style={{ margin: "0" }}>
-                                                        Deadline:{" "}
-                                                        {p.deadline.toLocaleString()}
-                                                    </p>
-                                                    <p
-                                                        style={{
-                                                            marginBottom: "0",
-                                                        }}
-                                                    >
-                                                        Yay Votes: {p.yayVotes}
-                                                    </p>
-                                                    <p style={{ margin: "0" }}>
-                                                        Nay Votes: {p.nayVotes}
-                                                    </p>
-                                                    <p style={{ margin: "0" }}>
-                                                        Abstain Votes:{" "}
-                                                        {p.abstainVotes}
-                                                    </p>
-                                                    <div className="btn__container">
-                                                        <Button
-                                                            variant="outlined"
-                                                            onClick={() =>
-                                                                voteOnProposal(
-                                                                    p.proposalId,
-                                                                    "Yay"
-                                                                )
-                                                            }
-                                                        >
-                                                            Yay
-                                                        </Button>
-                                                        <Button
-                                                            variant="outlined"
-                                                            onClick={() =>
-                                                                voteOnProposal(
-                                                                    p.proposalId,
-                                                                    "Nay"
-                                                                )
-                                                            }
-                                                        >
-                                                            Nay
-                                                        </Button>
-                                                        <Button
-                                                            variant="outlined"
-                                                            onClick={() =>
-                                                                voteOnProposal(
-                                                                    p.proposalId,
-                                                                    "Abstain"
-                                                                )
-                                                            }
-                                                        >
-                                                            Abstain
-                                                        </Button>
-                                                    </div>
-                                                </div>
-                                            </Grid>
-                                        ))}
-                                    </Grid>
-                                </Box>
-                            )}
+                         <Vote
+                           proposals={proposals} 
+                           voteOnProposal={voteOnProposal}
+                         />
                         </TabPanel>
                     </TabContext>
                 </Box>
