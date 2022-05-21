@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/utils/Base64.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "library/BokkyPooBahsDateTimeLibrary/contracts/BokkyPooBahsDateTimeLibrary.sol";
 
-contract BirthCertificate is ERC721URIStorage, Ownable {
+contract BirthCertificate is ERC721URIStorage, Ownable{
   using Strings for uint256;
   using Counters for Counters.Counter;
   Counters.Counter private _tokenIds;

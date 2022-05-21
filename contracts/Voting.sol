@@ -35,9 +35,13 @@ contract Voting {
   }
 
   // title to proposal mapping
-  mapping(string => Proposal) public proposals;
-  // number of proposal that have been created
-  uint256 public numProposals =0;
+  // mapping(string => Proposal) public proposals;
+
+  // id to proposal mapping
+  mapping(uint256 => Proposal) public proposals;
+  
+  // number of proposal that have been created. counting from 1.
+  uint256 public numProposals = 1;
 
   // get tokenId from nft contract
   function getTokenId() public view returns(uint256) {
@@ -53,10 +57,9 @@ contract Voting {
   //@dev create  a new voting proposal
   function createProposal(string memory _title, string memory _body,string memory _location, uint256 _deadline) public {
     //require msg.sender is approved address (WIP)
-    require(!proposals[_title].created, "This proposal already exists"); // make sure a proposal with this title DOES NOT exist
-    numProposals++; // start counting from 1
-    // create a propsal with vote counts set to zero. work around because struct with mapping throw an error if assigned the normal way
-    Proposal storage newProposal = proposals[_title];
+    // require(!proposals[_title].created, "This proposal already exists"); // make sure a proposal with this title DOES NOT exist
+    // create a propsal with vote counts set to zero. This is a work around because struct with mapping throw an error if assigned the normal way
+    Proposal storage newProposal = proposals[numProposals];
     newProposal.title = _title;
     newProposal.body = _body;
     newProposal.location = _location;
@@ -65,32 +68,33 @@ contract Voting {
     newProposal.Nay = 0;
     newProposal.Abstain = 0;
     newProposal.created = true;
+    numProposals++;
   }
 
-  function vote(string memory _title, string memory _vote) public{
+  function vote(uint _numProposals, string memory _vote) public{
     uint256 tokenId = getTokenId();
     require(tokenId > 0, "You must have a valid birth certificate");
     (uint256 voterEligibity, string memory location) = getEligibityandLocation(tokenId);
     require(voterEligibity > 0, "Must be elgible to vote");
-    require(proposals[_title].voters[tokenId] = false, "You already voted");
-    require(keccak256(abi.encodePacked(location)) == keccak256(abi.encodePacked(proposals[_title].location)), "Must have same location with the proposal location"); 
-    require(proposals[_title].created, "This proposal does not exist"); // make sure a proposal with this title DOES exist
+    require(proposals[_numProposals].voters[tokenId] = false, "You already voted");
+    require(keccak256(abi.encodePacked(location)) == keccak256(abi.encodePacked(proposals[_numProposals].location)), "Must have same location with the proposal location"); 
+    require(proposals[_numProposals].created, "This proposal does not exist"); // make sure a proposal with this title DOES exist
     require(
       keccak256(abi.encodePacked(_vote)) == keccak256(abi.encodePacked("Yay")) ||
       keccak256(abi.encodePacked(_vote)) == keccak256(abi.encodePacked("Nay")) ||
       keccak256(abi.encodePacked(_vote)) == keccak256(abi.encodePacked("Abstain")),
       "Please vote with Yay, Nay, or Abstain"
     );
-    require(block.timestamp < proposals[_title].deadline, "This proposal already expired");
+    require(block.timestamp < proposals[_numProposals].deadline, "This proposal already expired");
 
     if(keccak256(abi.encodePacked(_vote)) == keccak256(abi.encodePacked("Yay"))){
-      proposals[_title].Yay ++;
+      proposals[_numProposals].Yay ++;
       }else if(keccak256(abi.encodePacked(_vote)) == keccak256(abi.encodePacked("Nay"))){
-      proposals[_title].Nay ++;
+      proposals[_numProposals].Nay ++;
       }else if (keccak256(abi.encodePacked(_vote)) == keccak256(abi.encodePacked("Abstain"))){
-      proposals[_title].Abstain ++;
+      proposals[_numProposals].Abstain ++;
       }
-    proposals[_title].voters[tokenId] = true; // mark tokenId already vote on _title proposal so it cannot vote again
+    proposals[_numProposals].voters[tokenId] = true; // mark tokenId already vote on _title proposal so it cannot vote again
   } 
 
 

@@ -39,14 +39,14 @@ async function main() {
   await birthCertificate
     .connect(people2)
     .mint(people2.address, "Anon", "Earth Hospital", "Earth", 12839289);
-
+  console.log("voting...");
   await voting
     .connect(owner)
-    .createProposal("title", "sample body", "Earth", 2347428689);
+    .createProposal("a title", "sample body", "Earth", 2347428689);
 
-  await voting.connect(owner).vote("title", "Yay");
+  await voting.connect(owner).vote(1, "Yay");
   // await voting.connect(people).vote("title", "Yay"); // this one should throw error
-  await voting.connect(owner).vote("title", "Yay");
+  await voting.connect(owner).vote(1, "Yay");
 }
 
 main()
