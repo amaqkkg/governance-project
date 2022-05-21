@@ -5,7 +5,7 @@ import "hardhat/console.sol";
 // testing purpose, how to access struct data from another contract given the tokenId 
 
 interface IBirthCertificate {
-  function getStructData(uint _tokenId) external view returns (
+  function getCertificatebyTokenId(uint _tokenId) external view returns (
     string memory name,
     string memory locationofBirth,
     string memory location,
@@ -24,7 +24,7 @@ contract SimpleContract {
 
   function getVoterEligibity(uint256 _tokenId) public view returns(uint256) { // changed to public for testing purpose
     uint256 voterEligibity;
-    (,,,,voterEligibity) = IBirthCertificate(birthCertificateContract).getStructData(_tokenId);
+    (,,,,voterEligibity) = IBirthCertificate(birthCertificateContract).getCertificatebyTokenId(_tokenId);
     // if (voterEligibity == 1) {
     //   console.log("value 1 : ", voterEligibity);
     // } else console.log("value 0 : ", voterEligibity);

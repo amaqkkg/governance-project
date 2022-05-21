@@ -29,24 +29,24 @@ contract BirthCertificate is ERC721URIStorage, Ownable {
     uint256 voterEligibity;
   }
 
-  struct Proposal{
-      string title;
-      string body;
-      string location;
-      uint256 deadline;
-      uint256 Yay;
-      uint256 Nay;
-      uint256 Abstain;
-      bool created;
-    }
-
   uint256 MAX_BC_PER_ADDRESS = 1;
 
-  mapping (string => Proposal) public proposals;
   mapping (uint256 => Certificate) public tokenIdtoCertificate;
   mapping (address => uint256) public addresstoTokenId;
+  // mapping (address => bool) public whitelistedAddress;
 
   constructor() ERC721("Birth Certificate NFT", "BCNFT") {}
+
+// whitelisted address modifier
+// modifier whitelisted() {
+//   require(whitelistedAddress[msg.sender] = true, "Your address cannot mint the NFT");
+//   _;
+// }
+
+// // add whitelisted address
+// function whitelistedStatus(address _address, bool _bool) public onlyOwner {
+//   whitelistedAddress[_address] = _bool;
+// }
 
 // on chain NFT Certificate
   function generateCertificate(uint256 tokenId) public view returns(string memory) {
@@ -123,19 +123,19 @@ contract BirthCertificate is ERC721URIStorage, Ownable {
     );
   }
 
-  function mint(address _address, string memory _name, string memory _locationofBirth, string memory _location, uint256 _dateofBirth) public { // onlyOwner modifier removed for testing
-    require(balanceOf(_address) < MAX_BC_PER_ADDRESS, "Only one BoC per address!");
+  function mint(address _address, string memory _name, string memory _locationofBirth, string memory _location, uint256 _dateofBirth) public onlyOwner { 
+    require(balanceOf(_address) < MAX_BC_PER_ADDRESS, "Only one BC per address!");
+    _tokenIds.increment(); //tokenId start from 1
     uint256 newTokenId = _tokenIds.current();
     _safeMint(_address, newTokenId);
     uint256 _voterEligibity = checkVoteEligibity(_dateofBirth);
     tokenIdtoCertificate[newTokenId] = Certificate(_name, _locationofBirth, _location, _dateofBirth, _voterEligibity);
     addresstoTokenId[_address] = newTokenId;
     _setTokenURI(newTokenId, getTokenURI(newTokenId));
-    _tokenIds.increment();
   }
 
   // add function to get tokenIdtoCertificate accessible within other contract via interface (example code at NewContract.sol)
-  function getStructData(uint256 _tokenId) public view returns (
+  function getCertificatebyTokenId(uint256 _tokenId) public view returns (
     string memory name,
     string memory locationofBirth,
     string memory location,
@@ -149,43 +149,9 @@ contract BirthCertificate is ERC721URIStorage, Ownable {
     voterEligibity = tokenIdtoCertificate[_tokenId].voterEligibity;
   }
 
-    //voting functions
-
-    // @param _title the title of the proposal being put forth
-    //@param _body description of the proposal 
-    //@param _location dictates who can vote off of geographic location
-    //@pparam _deadline when the option to vote expires in epoch
-    //@dev create  a new voting proposal
-    function createProposal(string memory _title, string memory _body,string memory _location, uint256 _deadline ) public onlyOwner{
-      require(!proposals[_title].created, "This proposal already exists"); // make sure a proposal with this title DOES NOT exist 
-      proposals[_title] = Proposal(_title, _body, _location, _deadline, 0,0,0, true); // create a propsal with vote counts set to zero
-    }
-
-    //@param _title of the proposal to vote on
-    //@param _vote the users vote yay, nay, or abstain
-    //@dev allow the user to vote on existing proposals
-    function vote(string memory _title, string memory _vote) public{
-      require(addresstoTokenId[msg.sender] >=0, "You must have a valid birth certificate");
-      require( tokenIdtoCertificate[addresstoTokenId[msg.sender]].voterEligibity == 1, "Must be elgible to vote"); 
-      require(keccak256(abi.encodePacked(tokenIdtoCertificate[addresstoTokenId[msg.sender]].location)) == keccak256(abi.encodePacked(proposals[_title].location))); //will need to be changed to work with the contract
-      require(proposals[_title].created, "This proposal does not exist"); // make sure a proposal with this title DOES exist
-      require(block.timestamp < proposals[_title].deadline, "Voting on this proposal has ended");//make voting is still open
-      require(
-          keccak256(abi.encodePacked(_vote)) == keccak256(abi.encodePacked("Yay")) ||
-          keccak256(abi.encodePacked(_vote)) == keccak256(abi.encodePacked("Nay")) ||
-          keccak256(abi.encodePacked(_vote)) == keccak256(abi.encodePacked("Absatin")),
-          "Please vote with Yay, Nay, or Abstain"
-      );
-
-
-      if(keccak256(abi.encodePacked(_vote)) == keccak256(abi.encodePacked("Yay"))){
-        proposals[_title].Yay ++;
-      }else if(keccak256(abi.encodePacked(_vote)) == keccak256(abi.encodePacked("Nay"))){
-        proposals[_title].Nay ++;
-      }else{
-        proposals[_title].Abstain ++;
-      }
-    } 
-
+  // function to get addresstoTokenId accessible within other contract via interface
+    function getTokenIdbyAddress(address _address) public view returns (uint256 tokenId) {
+    tokenId = addresstoTokenId[_address];
+  }
 
 }
