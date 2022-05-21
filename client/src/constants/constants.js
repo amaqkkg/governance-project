@@ -1,7 +1,7 @@
 export const NFT_CONTRACT_ADDRESS =
     "0x92bBdbA86C3344c23cBB2B21A6d6a83781604E2E";
 export const VOTE_CONTRACT_ADDRESS =
-    "0xda4f5C93B82eEf69dC453e7711B779391F50e66E";
+    "0x93E83689b2082151cc7952480258eD4B42156562";
 export const nftabi = [
     { inputs: [], stateMutability: "nonpayable", type: "constructor" },
     {
