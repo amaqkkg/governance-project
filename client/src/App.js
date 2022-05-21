@@ -2,14 +2,14 @@ import "./App.css";
 import { useState, useRef, useEffect } from "react";
 import { providers, Contract } from "ethers";
 import Web3Modal from "web3modal";
-import Grid from "@mui/material/Grid";
-import TextField from "@mui/material/TextField";
 
-import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
+import {Box, Tab, Button, Stack, TextField, Grid} from '@mui/material'
+import {TabContext, TabList, TabPanel} from '@mui/lab'
+import { styled } from "@mui/material/styles";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+
 import moment from "moment";
 import {
     NFT_CONTRACT_ADDRESS,
@@ -18,12 +18,6 @@ import {
     voteabi,
 } from "./constants/constants";
 
-import Box from "@mui/material/Box";
-import Tab from "@mui/material/Tab";
-import TabContext from "@mui/lab/TabContext";
-import TabList from "@mui/lab/TabList";
-import TabPanel from "@mui/lab/TabPanel";
-import { styled } from "@mui/material/styles";
 
 const defaultValues = {
     name: "",
@@ -335,7 +329,7 @@ const App = () => {
                         style={{ color: "#000", background: "#e6aaae" }}
                         className="connect__btn"
                     >
-                        {walletAddress.slice(0, 2)}...{walletAddress.slice(-3)}
+                        {walletAddress?.slice(0, 2)}...{walletAddress?.slice(-3)}
                     </Button>
                 ) : (
                     <Button
@@ -442,7 +436,7 @@ const App = () => {
                                                 fullWidth
                                                 value={formValues.birthday}
                                                 onChange={handleInputChange}
-                                                sx={{ width: 220 }}
+                                                // sx={{ width: 220 }}
                                                 InputLabelProps={{
                                                     shrink: true,
                                                 }}
@@ -540,11 +534,11 @@ const App = () => {
                                                 />
                                             </Grid>
                                             <Grid item>
-                                                <LocalizationProvider
+                                                {/* <LocalizationProvider
                                                     dateAdapter={AdapterDateFns}
                                                 >
                                                     <DateTimePicker
-                                                        label="Responsive"
+                                                        label="Voting Deadline"
                                                         renderInput={(
                                                             params
                                                         ) => (
@@ -561,8 +555,8 @@ const App = () => {
                                                             );
                                                         }}
                                                     />
-                                                </LocalizationProvider>
-                                                {/* <CssTextField
+                                                </LocalizationProvider> */}
+                                                <CssTextField
                                                     id="date"
                                                     label="Deadline"
                                                     name="deadline"
@@ -571,14 +565,17 @@ const App = () => {
                                                     value={
                                                         proposalFormValues.deadline
                                                     }
-                                                    onChange={
-                                                        handleCreateInputChange
-                                                    }
-                                                    sx={{ width: 220 }}
+                                                    onChange={(
+                                                        newValue
+                                                    ) => {
+                                                        setDeadlineTime(
+                                                            newValue
+                                                        );
+                                                    }}
                                                     InputLabelProps={{
                                                         shrink: true,
                                                     }}
-                                                /> */}
+                                                />
                                             </Grid>
                                             <Button
                                                 variant="contained"
