@@ -46,7 +46,7 @@ async function main() {
 
   await voting.connect(owner).vote("title", "Yay");
   // await voting.connect(people).vote("title", "Yay"); // this one should throw error
-  await voting.connect(people2).vote("title", "Yay");
+  await voting.connect(owner).vote("title", "Yay");
 }
 
 main()
