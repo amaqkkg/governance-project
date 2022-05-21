@@ -17,6 +17,7 @@ import {
     VOTE_CONTRACT_ADDRESS,
     voteabi,
 } from "./constants/constants";
+import { set } from "date-fns";
 
 
 const defaultValues = {
@@ -59,6 +60,7 @@ const CssTextField = styled(TextField)({
     },
 });
 
+
 const App = () => {
     const [walletConnected, setWalletConnected] = useState(false);
     const [walletAddress, setWalletAddress] = useState("");
@@ -68,6 +70,7 @@ const App = () => {
     const [nftBalance, setNftBalance] = useState(0);
     const [numProposals, setNumProposals] = useState("0");
     const [proposals, setProposals] = useState([]);
+    const [alreadyMinted, setAlreadyMinted] = useState(false)
 
     const [value, setValue] = useState("1");
 
@@ -316,6 +319,7 @@ const App = () => {
 
             setFormValues(defaultValues);
         } catch (error) {
+            setAlreadyMinted(true, setTimeout(()=>setAlreadyMinted(false), 4000))
             console.error(error);
         }
     };
@@ -451,6 +455,7 @@ const App = () => {
                                             Submit
                                         </Button>
                                     </Stack>
+                                    {alreadyMinted? <div style={{paddingTop:40}}>** You already have a Birth Certificate</div>: <></>}
                                 </Grid>
                             </form>
                         </TabPanel>
