@@ -1,7 +1,7 @@
 export const NFT_CONTRACT_ADDRESS =
     "0x92bBdbA86C3344c23cBB2B21A6d6a83781604E2E";
 export const VOTE_CONTRACT_ADDRESS =
-    "0x66C9E8E30A2892BFBF8E5430A4059d6b24aDd5c5";
+    "0xda4f5C93B82eEf69dC453e7711B779391F50e66E";
 export const nftabi = [
     { inputs: [], stateMutability: "nonpayable", type: "constructor" },
     {
@@ -376,7 +376,7 @@ export const voteabi = [
         type: "function",
     },
     {
-        inputs: [{ internalType: "string", name: "", type: "string" }],
+        inputs: [{ internalType: "uint256", name: "", type: "uint256" }],
         name: "proposals",
         outputs: [
             { internalType: "string", name: "title", type: "string" },
@@ -402,7 +402,7 @@ export const voteabi = [
     },
     {
         inputs: [
-            { internalType: "string", name: "_title", type: "string" },
+            { internalType: "uint256", name: "_numProposals", type: "uint256" },
             { internalType: "string", name: "_vote", type: "string" },
         ],
         name: "vote",

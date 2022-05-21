@@ -70,6 +70,7 @@ const App = () => {
     const [walletAddress, setWalletAddress] = useState("");
     const [nftLoading, setNftLoading] = useState(false);
     const [createProposalLoading, setCreateProposalLoading] = useState(false);
+    const [voteLoading, setVoteLoading] = useState(false);
     const [nftBalance, setNftBalance] = useState(0);
     const [numProposals, setNumProposals] = useState("0");
     const [proposals, setProposals] = useState([]);
@@ -153,6 +154,79 @@ const App = () => {
             console.error(error);
         }
     };
+
+    const fetchProposalById = async (id) => {
+        try {
+            const provider = await getProviderOrSigner();
+            const votecontract = new Contract(
+                VOTE_CONTRACT_ADDRESS,
+                voteabi,
+                provider
+            );
+            const proposal = await votecontract.proposals(id);
+            const parsedProposal = {
+                proposalId: id,
+                // nftTokenId: proposal.nftTokenId.toString(),
+                title: proposal.title,
+                description: proposal.body,
+                location: proposal.location,
+                deadline: new Date(
+                    parseInt(proposal.deadline.toString()) * 1000
+                ),
+                yayVotes: proposal.Yay.toString(),
+                nayVotes: proposal.Nay.toString(),
+                abstainVotes: proposal.Abstain.toString(),
+                // executed: proposal.executed,
+            };
+            console.log("parsedProposal", parsedProposal);
+            return parsedProposal;
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const fetchAllProposals = async () => {
+        try {
+            const proposals = [];
+            for (let i = 0; i < numProposals; i++) {
+                const proposal = await fetchProposalById(i);
+                proposals.push(proposal);
+            }
+            setProposals(proposals);
+            return proposals;
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const voteOnProposal = async (proposalId, _vote) => {
+        try {
+            const signer = await getProviderOrSigner(true);
+            const voteContract = new Contract(
+                VOTE_CONTRACT_ADDRESS,
+                voteabi,
+                signer
+            );
+            console.log("first", voteContract);
+
+            const txn = await voteContract.vote(proposalId, _vote);
+            console.log("txn");
+            console.log(proposalId, _vote);
+            setVoteLoading(true);
+            await txn.wait();
+            setVoteLoading(false);
+            await fetchAllProposals();
+        } catch (error) {
+            console.error(error);
+            window.alert(error.message);
+        }
+    };
+
+    useEffect(() => {
+        if (value === "3") {
+            fetchAllProposals();
+        }
+    }, [value]);
 
     useEffect(() => {
         if (!walletConnected) {
@@ -512,7 +586,9 @@ const App = () => {
                                                 type="submit"
                                                 onClick={createProposal}
                                             >
-                                                Submit
+                                                {createProposalLoading
+                                                    ? "loading..."
+                                                    : "Submit"}
                                             </Button>
                                         </Stack>
                                     </Grid>
@@ -523,7 +599,81 @@ const App = () => {
                             {proposals.length === 0 ? (
                                 <div>No proposals have been created</div>
                             ) : (
-                                <div></div>
+                                <Box sx={{ flexGrow: 1 }}>
+                                    <Grid container spacing={2}>
+                                        {proposals.map((p, index) => (
+                                            <Grid item xs={12} md={6} lg={4}>
+                                                <div
+                                                    key={index}
+                                                    className="proposalCard"
+                                                >
+                                                    <h3 style={{ margin: "0" }}>
+                                                        Proposal for: {p.title}
+                                                    </h3>
+                                                    <p style={{ margin: "0" }}>
+                                                        {p.description}
+                                                    </p>
+                                                    <p style={{ margin: "0" }}>
+                                                        Location: {p.location}
+                                                    </p>
+                                                    <p style={{ margin: "0" }}>
+                                                        Deadline:{" "}
+                                                        {p.deadline.toLocaleString()}
+                                                    </p>
+                                                    <p
+                                                        style={{
+                                                            marginBottom: "0",
+                                                        }}
+                                                    >
+                                                        Yay Votes: {p.yayVotes}
+                                                    </p>
+                                                    <p style={{ margin: "0" }}>
+                                                        Nay Votes: {p.nayVotes}
+                                                    </p>
+                                                    <p style={{ margin: "0" }}>
+                                                        Abstain Votes:{" "}
+                                                        {p.abstainVotes}
+                                                    </p>
+                                                    <div className="btn__container">
+                                                        <Button
+                                                            variant="outlined"
+                                                            onClick={() =>
+                                                                voteOnProposal(
+                                                                    p.proposalId,
+                                                                    "Yay"
+                                                                )
+                                                            }
+                                                        >
+                                                            Yay
+                                                        </Button>
+                                                        <Button
+                                                            variant="outlined"
+                                                            onClick={() =>
+                                                                voteOnProposal(
+                                                                    p.proposalId,
+                                                                    "Nay"
+                                                                )
+                                                            }
+                                                        >
+                                                            Nay
+                                                        </Button>
+                                                        <Button
+                                                            variant="outlined"
+                                                            onClick={() =>
+                                                                voteOnProposal(
+                                                                    p.proposalId,
+                                                                    "Abstain"
+                                                                )
+                                                            }
+                                                        >
+                                                            Abstain
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            </Grid>
+                                        ))}
+                                    </Grid>
+                                </Box>
                             )}
                         </TabPanel>
                     </TabContext>

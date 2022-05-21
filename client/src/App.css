@@ -37,3 +37,24 @@
   align-items: center;
   justify-content: center;
 }
+
+.proposals__Container {
+  /* display: grid; */
+}
+
+.proposalCard {
+  border: 1px solid #e6aaae;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  border-radius: 12px;
+}
+
+.btn__container {
+  display: flex;
+  justify-content: space-between;
+  width: 60%;
+  margin-top: 10px;
+}
